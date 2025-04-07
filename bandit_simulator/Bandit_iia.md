@@ -6,7 +6,7 @@
 </head>
   
   
-clave unica ______________________________  
+clave unica 192984  
 
 # Problema de Multi-Bandas (Multi-Armed Bandit): Teoría e Implementación
 
@@ -118,12 +118,45 @@ En el entorno de Banda Fija, cada brazo tiene una probabilidad constante de reco
 Definir el problema de decisión para la Banda Fija con horizonte de tiempo conocido T = 100. ¿Cuál es la función objetivo? ¿Cuáles son las restricciones? ¿Cuál es la política óptima?
 ```latex
 
+\subsection*{Entorno}
+- Dos brazos (acciones): $a_1$ y $a_2$  
+- Probabilidades conocidas: $p_1 = P(\text{recompensa} = 1 \mid a_1)$, $p_2 = 1 - p_1$  
+- Horizonte temporal fijo: $T = 100$  
+- Cada acción produce una recompensa binaria $r_t \in \{0, 1\}$
 
+\subsection*{Variables de decisión}
+- $a_t \in \{a_1, a_2\}$ para $t = 1, 2, ..., 100$
 
+\subsection*{Función objetivo}
+Maximizar la recompensa total esperada en el horizonte:
 
+$$
+\max_{a_1, ..., a_{100}} \mathbb{E} \left[ \sum_{t=1}^{100} r_t \right]
+$$
 
+Dado que $r_t$ depende directamente de la acción tomada:
 
+$$
+= \max_{a_t} \sum_{t=1}^{100} \mathbb{E}[r_t \mid a_t] = \sum_{t=1}^{100} p(a_t)
+$$
 
+\subsection*{Restricciones}
+- $a_t \in \{a_1, a_2\}$ para todo $t$
+- Se deben tomar exactamente $T = 100$ decisiones
+
+\subsection*{Política óptima}
+$$
+a^* = 
+\begin{cases}
+a_1 & \text{si } p_1 > p_2 \\
+a_2 & \text{si } p_2 > p_1 \\
+\text{indiferente} & \text{si } p_1 = p_2
+\end{cases}
+$$
+
+Entonces la política óptima consiste en:
+- Elegir el mejor brazo (con mayor probabilidad de recompensa)
+- Repetir esa acción durante los 100 pasos
 
 ```
 
