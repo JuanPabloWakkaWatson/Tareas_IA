@@ -118,47 +118,33 @@ En el entorno de Banda Fija, cada brazo tiene una probabilidad constante de reco
 Definir el problema de decisión para la Banda Fija con horizonte de tiempo conocido T = 100. ¿Cuál es la función objetivo? ¿Cuáles son las restricciones? ¿Cuál es la política óptima?
 ```latex
 
-\subsection*{Entorno}
-- Dos brazos (acciones): $a_1$ y $a_2$  
-- Probabilidades conocidas: $p_1 = P(\text{recompensa} = 1 \mid a_1)$, $p_2 = 1 - p_1$  
-- Horizonte temporal fijo: $T = 100$  
-- Cada acción produce una recompensa binaria $r_t \in \{0, 1\}$
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    $$
+        \max_{a_1, a_2, \ldots, a_{100}} \mathbb{E}\left[\sum_{t=1}^{100} r_t\right]
+    $$
+    donde $r_t$ es la recompensa obtenida al elegir el brazo $a_t \in \{0,1\}$ en el turno $t$.
 
-\subsection*{Variables de decisión}
-- $a_t \in \{a_1, a_2\}$ para $t = 1, 2, ..., 100$
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item Cada $a_t$ debe ser una acción válida: $a_t \in \{0, 1\}$
+        \item Las probabilidades $p_1$ y $p_2$ son fijas pero desconocidas
+        \item El agente solo puede usar recompensas pasadas para estimar las probabilidades
+    \end{itemize}
 
-\subsection*{Función objetivo}
-Maximizar la recompensa total esperada en el horizonte:
+    \item \textbf{Política óptima:} 
+    Dado que las probabilidades son fijas y el horizonte $T$ es conocido, una estrategia efectiva consiste en:
+    \begin{itemize}
+        \item Explorar cada brazo un número pequeño de veces (por ejemplo, 10 veces).
+        \item Estimar las probabilidades empíricas $\hat{p}_1$ y $\hat{p}_2$.
+        \item Seleccionar el brazo con mayor estimación para los turnos restantes.
+    \end{itemize}
+\end{itemize}
 
-$$
-\max_{a_1, ..., a_{100}} \mathbb{E} \left[ \sum_{t=1}^{100} r_t \right]
-$$
-
-Dado que $r_t$ depende directamente de la acción tomada:
-
-$$
-= \max_{a_t} \sum_{t=1}^{100} \mathbb{E}[r_t \mid a_t] = \sum_{t=1}^{100} p(a_t)
-$$
-
-\subsection*{Restricciones}
-- $a_t \in \{a_1, a_2\}$ para todo $t$
-- Se deben tomar exactamente $T = 100$ decisiones
-
-\subsection*{Política óptima}
-$$
-a^* = 
-\begin{cases}
-a_1 & \text{si } p_1 > p_2 \\
-a_2 & \text{si } p_2 > p_1 \\
-\text{indiferente} & \text{si } p_1 = p_2
-\end{cases}
-$$
-
-Entonces la política óptima consiste en:
-- Elegir el mejor brazo (con mayor probabilidad de recompensa)
-- Repetir esa acción durante los 100 pasos
 
 ```
+
+
 
 #### Decisión (T Aleatorio)
 
@@ -166,13 +152,27 @@ Entonces la política óptima consiste en:
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Fija con horizonte de tiempo desconocido T ~ Uniform(1, 300). ¿Cómo afecta el horizonte de tiempo aleatorio la estrategia óptima?
 ```latex
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    $$
+        \max_{a_1, a_2, \ldots, a_T} \mathbb{E}_T\left[\sum_{t=1}^{T} r_t\right]
+    $$
+    donde $r_t$ es la recompensa al elegir el brazo $a_t \in \{0, 1\}$ en el turno $t$, y $T$ es una variable aleatoria con distribución uniforme entre 1 y 300.
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item Cada $a_t$ debe ser una acción válida: $a_t \in \{0, 1\}$
+        \item Las probabilidades de recompensa $p_1$ y $p_2$ son constantes pero desconocidas
+        \item El agente no conoce el valor de $T$ al momento de tomar decisiones
+    \end{itemize}
 
-
-
-
-
-
+    \item \textbf{Impacto del horizonte aleatorio:}
+    \begin{itemize}
+        \item El agente debe asumir que el juego puede terminar en cualquier momento.
+        \item Es preferible explorar rápidamente para evitar desperdiciar turnos si el juego termina pronto.
+        \item Se recomienda una estrategia más agresiva, reduciendo la fase de exploración o utilizando un esquema $\varepsilon$-greedy con $\varepsilon$ decreciente rápidamente.
+    \end{itemize}
+\end{itemize}
 
 ```
 
@@ -195,13 +195,31 @@ En el entorno de Banda Periódica, la probabilidad de recompensa de cada brazo c
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Periódica con horizonte de tiempo conocido T = 100 y período k = 10. ¿Cómo abordarías la búsqueda de una estrategia óptima? ¿Qué información adicional sería valiosa rastrear?
 ```latex
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, \ldots, a_{100}} \mathbb{E}\left[\sum_{t=1}^{100} r_t\right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y las probabilidades $p_i(t)$ cambian cada 10 turnos.
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$, para todo $t \in \{1, \ldots, 100\}$
+        \item $p_1(t), p_2(t)$ cambian cada $k = 10$ turnos según:
+        \[
+        p_i(t) = p_i^{\lfloor t/k \rfloor}, \quad p_i^j \sim \text{Uniform}(0.01, 0.99)
+        \]
+        \item Las probabilidades se mantienen constantes dentro de cada período, pero no se conocen de antemano.
+    \end{itemize}
 
-
-
-
-
-
+    \item \textbf{Estrategia óptima sugerida:}
+    \begin{itemize}
+        \item Dividir el horizonte en 10 períodos de longitud $k = 10$.
+        \item Al inicio de cada período, explorar ambos brazos durante algunos turnos para estimar las nuevas probabilidades.
+        \item Explotar el brazo con mayor estimación el resto del período.
+        \item Rastrear la tasa de éxito por brazo dentro de cada período, así como el turno actual relativo al inicio del período.
+    \end{itemize}
+\end{itemize}
 
 ```
 #### Decisión (T Aleatorio)
@@ -210,13 +228,31 @@ Definir el problema de decisión para la Banda Periódica con horizonte de tiemp
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Periódica con horizonte de tiempo desconocido T ~ Uniform(1, 300) y período k = 10. ¿Cómo interactúa la aleatoriedad en T con la naturaleza periódica del entorno?
 ```latex
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, a_2, \ldots} \mathbb{E}_{T} \left[ \sum_{t=1}^{T} r_t \right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y las probabilidades cambian cada $k = 10$ turnos según:
+    \[
+        p_i(t) = p_i^{\lfloor t/10 \rfloor}, \quad p_i^j \sim \text{Uniform}(0.01, 0.99)
+    \]
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$ para cada turno $t$
+        \item El horizonte $T$ es desconocido y se distribuye uniformemente: $T \sim \text{Uniform}(1, 300)$
+        \item Las probabilidades $p_1(t)$ y $p_2(t)$ cambian cada 10 turnos, y se mantienen fijas dentro de cada período
+    \end{itemize}
 
-
-
-
-
-
+    \item \textbf{Interacción entre aleatoriedad en $T$ y periodicidad:}
+    \begin{itemize}
+        \item La estrategia debe adaptarse al riesgo de que el juego termine en cualquier momento.
+        \item El agente debe explorar de manera rápida y eficiente en cada período, tal vez solo durante 1 o 2 turnos.
+        \item En algunos casos, podría ser más rentable continuar explotando un brazo previamente bueno si no hay suficiente evidencia de cambio.
+        \item Se recomienda rastrear el número de turnos desde el último cambio de período para sincronizar la estrategia con la estructura periódica del entorno.
+    \end{itemize}
+\end{itemize}
 
 ```
 ### 3.3 Entorno de Banda Dinámica
@@ -237,13 +273,34 @@ En el entorno de Banda Dinámica, las probabilidades de recompensa para ambos br
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Dinámica con horizonte de tiempo conocido T = 100. ¿Hay una forma significativa de aprender de observaciones pasadas en este entorno? ¿Cuál sería la estrategia óptima?
 ```latex
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, \ldots, a_{100}} \mathbb{E} \left[ \sum_{t=1}^{100} r_t \right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y las probabilidades cambian en cada turno:
+    \[
+        p_1(t), p_2(t) \sim \text{Uniform}(0.01, 0.99)
+    \]
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$ para cada $t$
+        \item Las probabilidades se generan de nuevo cada turno, independientemente de turnos anteriores
+    \end{itemize}
 
+    \item \textbf{¿Se puede aprender del pasado?:}
+    \begin{itemize}
+        \item No hay valor en observar el historial largo, ya que las probabilidades son independientes cada turno.
+        \item Las recompensas pasadas no ofrecen información útil sobre turnos futuros.
+    \end{itemize}
 
-
-
-
-
+    \item \textbf{Estrategia óptima sugerida:}
+    \begin{itemize}
+        \item Seleccionar acciones de forma aleatoria, ya que no hay forma fiable de estimar qué brazo será mejor.
+        \item Alternativamente, aplicar una estrategia de muy corto plazo como repetir el brazo si dio recompensa en el turno anterior.
+    \end{itemize}
+\end{itemize}
 
 ```
 #### Decisión (T Aleatorio)
@@ -252,13 +309,30 @@ Definir el problema de decisión para la Banda Dinámica con horizonte de tiempo
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Dinámica con horizonte de tiempo desconocido T ~ Uniform(1, 300). ¿Cambia significativamente el enfoque óptimo en este entorno altamente dinámico si el horizonte de tiempo es desconocido?
 ```latex
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, a_2, \ldots} \mathbb{E}_{T} \left[ \sum_{t=1}^{T} r_t \right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y en cada turno:
+    \[
+        p_1(t), p_2(t) \sim \text{Uniform}(0.01, 0.99)
+    \]
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$ para cada turno $t$
+        \item El horizonte total de turnos $T$ es desconocido y sigue una distribución uniforme
+        \item Las probabilidades cambian completamente en cada turno, sin dependencia del pasado
+    \end{itemize}
 
-
-
-
-
-
+    \item \textbf{¿Cambia el enfoque óptimo por el horizonte aleatorio?}
+    \begin{itemize}
+        \item No significativamente. En ambos casos (con $T$ fijo o aleatorio), el entorno cambia tan rápido que no se puede aprovechar el historial.
+        \item La estrategia sigue siendo seleccionar brazos de manera aleatoria o aplicar una regla muy simple de tipo "repite si funcionó".
+        \item No hay suficiente tiempo ni estructura para que estrategias de aprendizaje tengan ventaja significativa.
+    \end{itemize}
+\end{itemize}
 
 ```
 ### 3.4 Entorno de Banda Totalmente Aleatorio
@@ -282,13 +356,40 @@ En el entorno de Banda Totalmente Aleatorio, las probabilidades de los brazos se
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Totalmente Aleatoria con horizonte de tiempo conocido T = 100. ¿Cómo equilibrarías la exploración y explotación sabiendo que las probabilidades de los brazos podrían cambiar repentinamente?
 ```latex
+\textbf{Problema de decisión: Banda Totalmente Aleatoria con horizonte de tiempo conocido $T = 100$}
 
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, \ldots, a_{100}} \mathbb{E} \left[ \sum_{t=1}^{100} r_t \right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y las probabilidades evolucionan de la siguiente manera:
+    \[
+        p_i(0) \sim \text{Uniform}(0.01, 0.99), \quad \forall i \in \{1, 2\}
+    \]
+    \[
+        \text{Para } t > 0:
+        \begin{cases}
+            p_i(t) \sim \text{Uniform}(0.01, 0.99) & \text{con probabilidad } 0.05 \\
+            p_i(t) = p_i(t-1) & \text{con probabilidad } 0.95
+        \end{cases}
+    \]
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$, para todo $t$
+        \item El agente no observa directamente los cambios de probabilidad, solo las recompensas
+    \end{itemize}
 
-
-
-
-
+    \item \textbf{Estrategia de exploración y explotación:}
+    \begin{itemize}
+        \item Realizar una fase de exploración inicial para estimar $p_1$ y $p_2$.
+        \item Explotar el brazo con mejor desempeño mientras las recompensas se mantengan estables.
+        \item Monitorear cambios en las tasas de éxito recientes (por ejemplo, con una ventana deslizante).
+        \item Si se detecta un cambio repentino en el rendimiento, reiniciar la exploración temporalmente.
+        \item Se recomienda mantener un pequeño grado de exploración continua (estrategia $\varepsilon$-greedy o similar).
+    \end{itemize}
+\end{itemize}
 
 ```
 #### Decisión (T Aleatorio)
@@ -297,13 +398,40 @@ Definir el problema de decisión para la Banda Totalmente Aleatoria con horizont
 **RESPUESTA**  
 Definir el problema de decisión para la Banda Totalmente Aleatoria con horizonte de tiempo desconocido T ~ Uniform(1, 300). ¿Cómo interactúan las dos formas de aleatoriedad (en las probabilidades de los brazos y en el horizonte de tiempo)?
 ```latex
+\textbf{Problema de decisión: Banda Totalmente Aleatoria con horizonte de tiempo aleatorio $T \sim \text{Uniform}(1, 300)$}
 
+\begin{itemize}
+    \item \textbf{Función objetivo:}
+    \[
+        \max_{a_1, a_2, \ldots} \mathbb{E}_T \left[ \sum_{t=1}^{T} r_t \right]
+    \]
+    donde $r_t \sim \text{Bernoulli}(p_{a_t}(t))$, y las probabilidades evolucionan de la siguiente manera:
+    \[
+        p_i(0) \sim \text{Uniform}(0.01, 0.99)
+    \]
+    \[
+        \text{Para } t > 0:
+        \begin{cases}
+            p_i(t) \sim \text{Uniform}(0.01, 0.99) & \text{con probabilidad } 0.05 \\
+            p_i(t) = p_i(t-1) & \text{con probabilidad } 0.95
+        \end{cases}
+    \]
 
+    \item \textbf{Restricciones:}
+    \begin{itemize}
+        \item $a_t \in \{0, 1\}$ para cada $t$
+        \item El horizonte total de turnos $T$ es desconocido
+        \item El agente no conoce ni observa directamente los cambios de probabilidad, solo las recompensas
+    \end{itemize}
 
-
-
-
-
+    \item \textbf{Interacción entre ambas aleatoriedades:}
+    \begin{itemize}
+        \item La incertidumbre sobre $T$ limita la planificación a largo plazo.
+        \item La posibilidad de cambio en $p_1(t)$ y $p_2(t)$ obliga a monitorear continuamente el rendimiento de cada brazo.
+        \item Se recomienda usar ventanas deslizantes para detectar cambios repentinos en el comportamiento de los brazos.
+        \item Mantener una tasa constante de exploración permite adaptarse tanto a cambios en las probabilidades como a la duración incierta del juego.
+    \end{itemize}
+\end{itemize}
 
 ```
 ## 4. Implementación de Agentes
