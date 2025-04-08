@@ -1,13 +1,13 @@
 
   
-clave unica ______________________________  
-
+clave unica 192984
 # Bandidos de Markov de Dos Brazos  
 Una **Guía Paso a Paso** para Modelar, Problemas de Decisión Básicos y Variaciones  
 
 Nota: Incluimos la notación como si las probabilidades de transición dependieran de $A_t$ (la acción tomada por el agente). Sin embargo, para simplificar los ejercicios y todo lo demás, se puede asumir que la acción no afecta las probabilidades de transición y que son independientes de las acciones.  
   
 EL primer objetivo es resolver la **seccion 6** de ejercicios para plantear un problema de decicion para una verion modificada, o resolver el ejercicio computacional que biene descrito en el resto de las secciones.
+
 ---
 
 ## **1. Introducción y Contexto**
@@ -41,16 +41,16 @@ A continuación, se muestra la estructura general que utilizaremos en este docum
 
 1. **Estados**  
    Cada brazo tiene un estado $X_t^{(1)}$ y $X_t^{(2)}$ en el tiempo $t$. Podemos representar el estado global (oculto) como  
-   \[
+   $$
    X_t \;=\; \bigl(X_t^{(1)},\; X_t^{(2)}\bigr).
-   \]  
+   $$  
    **Importante**: El agente **no** observa $X_t$. Conoce (o aprende) cómo evoluciona $X_t$, pero nunca lo ve directamente.
 
 2. **Acciones**  
    En cada instante $t$, el agente elige qué brazo jalar:  
-   \[
+   $$
    A_t \;\in\; \{\,1,\,2\}.
-   \]
+   $$
 
 3. **Transición**  
    El estado de los bandits evoluciona después de cada tirón. Esta evolución puede ser:  
@@ -68,22 +68,22 @@ A continuación, se muestra la estructura general que utilizaremos en este docum
 
 7. **Política**  
    Una política, denotada $\text{Pol}$, es una asignación desde la información actual del agente (p. ej., una **creencia** sobre los estados o simplemente el historial de recompensas) a una acción en $\{1,2\}$. Formalmente,  
-   \[
+   $$
    A_t \;=\; \text{Pol}(I_t),
-   \]  
+   $$  
    donde $I_t$ es la información del agente en el instante $t$.
 
 8. **Objetivo**  
    Un objetivo común es **maximizar** la recompensa acumulada esperada más el bono de exploración:  
-   \[
+   $$
    \max_{\text{Pol}} \;\mathbb{E}^{\text{Pol}}\!\Bigl[\sum_{t=1}^{T} \bigl(R_t + \beta\,B_t\bigr)\Bigr],
-   \]  
+   $$  
    en un horizonte **finito** $T$. Hay variantes con $T$ aleatorio o infinito.
 
 ### 2.2 Generación Probabilística en Segundo Plano
-En realidad cada bandido o banda tiene una probabilidad de otrogar un premio o no (ganar o perder) en cada turno, su probabilidad esta modelada como una cadena de markov donde la probabilidad de ganar depende de la probabilidad anterior. El resto de esta seccion explica como se modela a nivel computacional, pero es una nota tecnica en estricto sentido.  
+En realidad cada bandido o banda tiene una probabilidad de otrogar un premio o no (ganar o perder) en cada turno, su probabilidad esta modelada como una cadena de markov donde la probabilidad de ganar depende de la probabilidad anterior. El resto de esta seccion explica como se modela a nivel computacional, pero es una nota técnica en estricto sentido.  
 
-#### 2.2.1 Nota tecnica
+#### 2.2.1 Nota técnica
 En el trasfondo, los parámetros de cada problema (matrices de transición, probabilidades de recompensa) pueden **generarse aleatoriamente** mediante un **método basado en Dirichlet**. Concretamente:
 
 - **Matrices de Transición**  
@@ -120,16 +120,16 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 **Independiente, Transiciones Conocidas, $T$ Fijo, (Estado Oculto) + Bono de Exploración**
 
 1. **Espacio de Estados**  
-   \[
+   $$
    \mathcal{X}^{(i)} \text{ es el conjunto finito de posibles estados para el brazo } i,\quad i\in\{1,2\}.
-   \]  
+   $$  
    El estado (oculto) completo en el tiempo $t$ es $X_t = (X_t^{(1)}, X_t^{(2)})$.
 
 2. **Dinámica de Transición**  
    Cada brazo transita **independientemente** del otro. Para el brazo $i$,  
-   \[
+   $$
    P_i(x' \mid x) \;=\; \Pr\bigl(X_{t+1}^{(i)} = x' \,\big|\; X_t^{(i)} = x,\; A_t\bigr),
-   \]  
+   $$  
    donde la acción $A_t$ puede importar si la dinámica del bandido cambia cuando se jala. Estas matrices de transición $\{P_i\}$ son **conocidas** de antemano.
 
 3. **Observaciones**  
@@ -137,9 +137,9 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 
 4. **Modelo de Recompensa**  
    Cuando se jala el brazo $A_t$, el agente recibe  
-   \[
+   $$
    R_t \;=\; R\bigl(X_t^{(A_t)}\bigr),
-   \]  
+   $$  
    donde $R(\cdot)$ podría ser Bernoulli u otra función conocida. Como el estado está oculto, el agente solo ve la muestra resultante de la recompensa.
 
 5. **Bono de Exploración**  
@@ -147,9 +147,9 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 
 6. **Objetivo**  
    En un horizonte fijo $T$, se define  
-   \[
+   $$
    \max_{\text{Pol}} \;\mathbb{E}^{\text{Pol}}\!\Bigl[\sum_{t=1}^T \bigl(R_t + \beta\,B_t\bigr)\Bigr].
-   \]  
+   $$  
    Dado que las transiciones son **conocidas** pero el estado está **oculto**, el agente debe mantener una **creencia** sobre $(X_t^{(1)}, X_t^{(2)})$. En principio, se puede establecer un enfoque de programación dinámica parcialmente observable.
 
 ---
@@ -168,18 +168,18 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 
 4. **Modelo de Recompensa**  
    Misma estructura que el Problema Básico 1:  
-   \[
+   $$
    R_t \;=\; R\bigl(X_t^{(A_t)}\bigr).
-   \]  
+   $$  
    La función de recompensa podría ser conocida o parcialmente conocida. El agente ve únicamente la muestra $R_t$.
 
 5. **Bono de Exploración**  
    $\beta\,B_t$ se añade en cada paso.
 
 6. **Objetivo**  
-   \[
+   $$
    \max_{\text{Pol}} \quad \mathbb{E}^{\text{Pol}}\!\Bigl[\sum_{t=1}^T \bigl(R_t + \beta\,B_t\bigr)\Bigr],
-   \]  
+   $$  
    donde la esperanza está sobre la incertidumbre del agente en las matrices de transición y los estados ocultos.
 
 ---
@@ -192,9 +192,9 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 
 2. **Dinámica de Transición**  
    El estado conjunto evoluciona según  
-   \[
+   $$
    X_{t+1} \;\sim\; P\bigl(\cdot \mid X_t,\; A_t\bigr),
-   \]  
+   $$  
    lo cual **puede** codificar correlaciones entre los dos brazos en los siguientes estados. Esta matriz de transición $P$ es **conocida** desde el inicio.
 
 3. **Observaciones**  
@@ -202,17 +202,17 @@ Esta sección define un conjunto mínimo de **problemas de decisión básicos**�
 
 4. **Modelo de Recompensa**  
    Misma idea: la recompensa depende del sub-estado del brazo elegido,  
-   \[
+   $$
    R_t \;=\; R\bigl(X_t, A_t\bigr).
-   \]
+   $$
 
 5. **Bono de Exploración**  
    Se añade $\beta\,B_t$ en cada paso.
 
 6. **Objetivo**  
-   \[
+   $$
    \max_{\text{Pol}} \quad \mathbb{E}^{\text{Pol}}\!\Bigl[\sum_{t=1}^T \bigl(R_t + \beta\,B_t\bigr)\Bigr].
-   \]  
+   $$  
    Similar al Problema Básico 1, pero ahora con transiciones **dependientes**. El agente conoce $P$ pero no $X_t$.
 
 ---
@@ -236,15 +236,15 @@ Este último problema básico puede incorporar **cualquiera** o **todas** las si
    Dado que $X_t$ está oculto, el agente lleva un **estado de creencia** $b_t(x) = \Pr(X_t = x \mid \text{historial hasta }t)$. Esto convierte el problema en un **POMDP**.
 
 5. **Recompensa + Bono**  
-   \[
+   $$
    R_t \;=\; R(X_t, A_t),\quad\;\;\text{más}\quad \beta\,B_t.
-   \]
+   $$
 
 6. **Objetivo**  
    Para un **horizonte aleatorio** o **infinito**, se podría tener  
-   \[
+   $$
    \max_{\text{Pol}} \;\mathbb{E}^{\text{Pol}}\!\Bigl[\sum_{t=1}^T \gamma^{t-1}\bigl(R_t + \beta\,B_t\bigr)\Bigr],
-   \]  
+   $$  
    donde $\gamma\le1$ es un factor de descuento, o se mantiene la misma forma finita si $T$ es aleatorio pero conocido en distribución.
 
 ---
@@ -371,14 +371,85 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
   *¿De qué manera disponer de la probabilidad exacta de éxito de un brazo cada turno influiría en la decisión de qué máquina jalar?*  
 
 **Definición del Problema**
-```
+```latex
 
+\subsection*{1. Espacio de Estados y Transiciones}
+
+Cada brazo \( i \in \{1, 2\} \) tiene un estado oculto \( s^i_t \in \mathcal{S} \) en el turno \( t \).  
+Los estados de los dos brazos evolucionan de forma \textbf{independiente} según cadenas de Markov \textbf{conocidas}:
+
+\[
+\mathbb{P}(s^i_{t+1} \mid s^i_t) = T^i_{s^i_t, s^i_{t+1}}
+\]
+
+donde \( T^i \) es la matriz de transición del brazo \( i \).
+
+\vspace{1em}
+
+\subsection*{2. Acciones por turno}
+
+Cada turno \( t \) se divide en dos fases:
+
+\begin{itemize}
+    \item \textbf{Fase de Consulta}: el agente elige un brazo \( a^{\text{obs}}_t \in \{1, 2\} \) del cual obtiene la probabilidad actual de éxito:
+    \[
+    o_t = \mathbb{P}(r_t = 1 \mid s^{a^{\text{obs}}_t}_t)
+    \]
+    
+    \item \textbf{Fase de Decisión}: el agente elige cuál brazo jalar realmente ese turno, es decir, ejecuta \( a_t \in \{1, 2\} \).
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{3. Observaciones}
+
+\begin{itemize}
+    \item Tras la consulta, el agente observa una probabilidad \( p_t \in [0, 1] \) correspondiente al brazo elegido en \( a^{\text{obs}}_t \).
+    \item Tras la acción real, observa la recompensa binaria \( r_t \in \{0, 1\} \) generada según:
+    \[
+    \mathbb{P}(r_t = 1 \mid s^{a_t}_t)
+    \]
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{4. Objetivo}
+
+Maximizar la recompensa total esperada en el horizonte fijo:
+
+\[
+\max_{\pi} \mathbb{E}\left[\sum_{t=1}^{T} \left(R_t + \beta\,B_t\right)\right]
+\]
+
+Donde:
+
+\begin{itemize}
+    \item \( R_t \): recompensa observada en el turno \( t \)
+    \item \( \beta\,B_t \): bono de exploración aplicado en el turno \( t \)
+    \item \( \pi \): política del agente, que puede depender del historial de acciones, recompensas y la consulta \( p_t \)
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{5. Incorporación de la Probabilidad Revelada}
+
+La consulta permite al agente obtener información directa sobre el estado oculto de un brazo sin necesidad de jalarlo.  
+Esto mejora su capacidad para inferir el valor esperado de cada acción y tomar decisiones más informadas.
+
+Incluso si decide no jalar el brazo consultado, el agente puede usar la probabilidad revelada para:
+
+\begin{itemize}
+    \item Inferir el estado actual del brazo consultado
+    \item Estimar su valor esperado futuro
+    \item Comparar mejor con el otro brazo, cuya probabilidad no se observa
+\end{itemize}
 
 ```
 
 **Pregunta de Intuición**
 ```
 
+¿Conviene más consultar el brazo que "menos conocemos" para reducir incertidumbre, o el que creemos que es "más probable que sea bueno" para confirmar y explotar?
 
 ```
 ---
@@ -410,14 +481,85 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
   *Dado que las transiciones son desconocidas, ¿cómo podría conocer la probabilidad exacta de ganar para un brazo en cada turno acelerar tu estimación de su dinámica de transición—o se usaría principalmente para explotar a corto plazo?*  
 
 **Definición del Problema**
-```
+```latex
 
+\subsection*{1. Espacio de Estados y Transiciones}
+
+Cada brazo \( i \in \{1, 2\} \) posee un estado oculto \( s^i_t \in \mathcal{S} \) que evoluciona de forma independiente a través del tiempo.  
+Sin embargo, a diferencia del Ejercicio 6.1, las matrices de transición \( T^i \) asociadas a cada brazo son \textbf{desconocidas} al inicio.  
+El agente debe aprenderlas a partir de las observaciones que obtenga durante el juego.
+
+\[
+\mathbb{P}(s^i_{t+1} \mid s^i_t) = T^i_{s^i_t, s^i_{t+1}} \quad \text{(desconocida)}
+\]
+
+\vspace{1em}
+
+\subsection*{2. Acciones por turno}
+
+Cada turno \( t \) se compone de dos fases:
+
+\begin{itemize}
+    \item \textbf{Fase de Consulta:} el agente elige \( a^{\text{obs}}_t \in \{1, 2\} \) para obtener la probabilidad actual de éxito del brazo seleccionado:
+    \[
+    o_t = \mathbb{P}(r_t = 1 \mid s^{a^{\text{obs}}_t}_t)
+    \]
+    
+    \item \textbf{Fase de Decisión:} el agente selecciona un brazo para jalar, \( a_t \in \{1, 2\} \), recibiendo una recompensa binaria más un bono de exploración.
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{3. Observaciones}
+
+\begin{itemize}
+    \item La consulta revela la probabilidad de éxito actual del brazo elegido en \( a^{\text{obs}}_t \): \( p_t \in [0, 1] \).
+    \item Al jalar un brazo, el agente observa la recompensa binaria:
+    \[
+    r_t \sim \text{Bernoulli}(\mathbb{P}(r_t = 1 \mid s^{a_t}_t))
+    \]
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{4. Objetivo}
+
+El objetivo es maximizar la recompensa total esperada a lo largo del horizonte fijo \( T \), considerando el bono de exploración y la posibilidad de aprendizaje a partir de las observaciones:
+
+\[
+\max_{\pi} \mathbb{E}\left[\sum_{t=1}^{T} \left(R_t + \beta\,B_t\right)\right]
+\]
+
+Donde:
+
+\begin{itemize}
+    \item \( R_t \): recompensa observada en el turno \( t \)
+    \item \( \beta\,B_t \): bono de exploración
+    \item \( \pi \): política del agente que puede depender del historial de acciones, recompensas y observaciones de probabilidad
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{5. Incorporación de la Probabilidad Revelada}
+
+Dado que las matrices de transición son desconocidas, la probabilidad observada mediante la consulta actúa como una pista parcial sobre el estado actual del brazo consultado.
+
+Esto permite al agente:
+
+\begin{itemize}
+    \item Inferir información útil sobre el estado latente actual
+    \item Estimar con mayor precisión cómo evolucionan los estados a lo largo del tiempo
+    \item Balancear entre aprender la dinámica del sistema y obtener recompensas inmediatas
+\end{itemize}
+
+A diferencia del Ejercicio 6.1, la consulta también tiene un valor \textit{epistemológico} (para aprender el modelo), no solo \textit{instrumental} (para decidir bien en ese turno).
 
 ```
 
 **Pregunta de Intuición**
 ```
 
+Dado que las transiciones son desconocidas, ¿cómo podría conocer la probabilidad exacta de ganar para un brazo en cada turno acelerar tu estimación de su dinámica de transición—o se usaría principalmente para explotar a corto plazo?
 
 ```
 ---
@@ -449,7 +591,83 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
   *¿Cómo podría revelar la probabilidad de éxito de un brazo proporcionar información sobre el otro brazo, dada la correlación en las transiciones?*  
 
 **Definición del Problema**
-```
+```latex
+
+\subsection*{1. Espacio de Estados y Transiciones}
+
+Existe una cadena de Markov conjunta sobre el espacio de estados \( \mathcal{S} = \mathcal{S}_1 \times \mathcal{S}_2 \), donde:
+
+\[
+S_t = (X_t^{(1)}, X_t^{(2)})
+\]
+
+representa el estado oculto completo en el turno \( t \).  
+Las transiciones están gobernadas por una matriz conjunta conocida:
+
+\[
+\mathbb{P}(S_{t+1} \mid S_t) = P_{S_t, S_{t+1}}
+\]
+
+Esta matriz codifica correlación entre los dos brazos: el estado de uno puede depender del del otro.
+
+\vspace{1em}
+
+\subsection*{2. Acciones por turno}
+
+Cada turno \( t \) consiste en:
+
+\begin{itemize}
+    \item \textbf{Fase de Consulta:} el agente elige \( a^{\text{obs}}_t \in \{1, 2\} \) y observa la probabilidad actual de éxito del brazo seleccionado:
+    \[
+    o_t = \mathbb{P}(r_t = 1 \mid X_t^{(a^{\text{obs}}_t)})
+    \]
+
+    \item \textbf{Fase de Decisión:} el agente selecciona un brazo para jalar, \( a_t \in \{1, 2\} \), y recibe la recompensa binaria más un bono.
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{3. Observaciones}
+
+\begin{itemize}
+    \item Observación de la consulta: probabilidad de éxito del brazo consultado.
+    \item Observación de la acción: recompensa binaria del brazo jalado.
+\end{itemize}
+
+Ambas observaciones pueden ser usadas para inferir parcialmente el estado oculto \( S_t \).
+
+\vspace{1em}
+
+\subsection*{4. Objetivo}
+
+Maximizar la recompensa esperada total en un horizonte fijo \( T \):
+
+\[
+\max_{\pi} \mathbb{E}\left[\sum_{t=1}^{T} \left(R_t + \beta\,B_t\right)\right]
+\]
+
+Donde:
+
+\begin{itemize}
+    \item \( R_t \): recompensa en el turno \( t \)
+    \item \( \beta\,B_t \): bono de exploración en el turno \( t \)
+    \item \( \pi \): política que depende del historial completo de acciones, recompensas y observaciones
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{5. Incorporación de la Probabilidad Revelada}
+
+La probabilidad observada en la consulta permite inferir información parcial sobre \( X_t^{(i)} \), el estado del brazo consultado.  
+Dado que las transiciones son conjuntas y conocidas, esta observación también afecta la creencia sobre \( X_t^{(j)} \), el estado del otro brazo.
+
+El agente puede usar esta observación para:
+
+\begin{itemize}
+    \item Inferir el estado conjunto \( S_t \)
+    \item Actualizar su creencia sobre el estado futuro usando la matriz de transición conocida
+    \item Decidir cuál brazo jalar con base en su valor esperado
+\end{itemize}
 
 
 ```
@@ -457,6 +675,7 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
 **Pregunta de Intuición**
 ```
 
+¿Cómo podría revelar la probabilidad de éxito de un brazo proporcionar información sobre el otro brazo, dada la correlación en las transiciones?
 
 ```
 ---
@@ -487,7 +706,81 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
   *¿Cómo prevés usar la consulta de probabilidad de éxito de un brazo en un entorno POMDP o con horizonte aleatorio? ¿Te permitiría explotar con más confianza un brazo prometedor o sería principalmente valiosa para refinar tu creencia a lo largo del tiempo?*  
 
 **Definición del Problema**
-```
+```latex
+
+\subsection*{1. Espacio de Estados y Transiciones}
+
+El sistema tiene un estado oculto \( S_t \in \mathcal{S} \), el cual puede representar uno o más componentes (por ejemplo, el estado conjunto de ambos brazos).  
+Las transiciones del sistema pueden ser:
+
+\begin{itemize}
+    \item \textbf{Conocidas}, con una matriz de transición \( \mathbb{P}(S_{t+1} \mid S_t) \) fija.
+    \item \textbf{Desconocidas}, que deben inferirse durante la interacción con el entorno.
+\end{itemize}
+
+El horizonte \( T \) puede ser:
+\begin{itemize}
+    \item Fijo
+    \item Aleatorio (por ejemplo, \( T \sim \text{Uniform}(1,300) \))
+    \item Infinito (descuento con factor \( \gamma < 1 \))
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{2. Acciones por turno}
+
+Cada turno \( t \) incluye las siguientes fases:
+
+\begin{itemize}
+    \item \textbf{Fase de Consulta:} el agente elige un brazo \( a^{\text{obs}}_t \in \{1, 2\} \) y observa su probabilidad de éxito:
+    \[
+    o_t = \mathbb{P}(r_t = 1 \mid S_t, a^{\text{obs}}_t)
+    \]
+    
+    \item \textbf{Fase de Decisión:} el agente elige un brazo para jalar, \( a_t \in \{1, 2\} \), y observa la recompensa binaria \( r_t \in \{0, 1\} \).
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{3. Observaciones}
+
+\begin{itemize}
+    \item La observación de la consulta revela una probabilidad de éxito específica para un brazo, que depende del estado oculto.
+    \item La recompensa obtenida tras jalar un brazo actúa como una observación binaria estocástica del estado.
+    \item Ambos tipos de observaciones se usan para mantener y actualizar una creencia sobre el estado oculto del sistema.
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{4. Objetivo}
+
+Maximizar el valor esperado acumulado de recompensas y bonos de exploración:
+
+\[
+\max_{\pi} \mathbb{E}\left[\sum_{t=1}^{T} \left(R_t + \beta\,B_t\right)\right] \quad \text{(o su versión descontada si \( T = \infty \))}
+\]
+
+Donde:
+
+\begin{itemize}
+    \item \( R_t \): recompensa observada en el turno \( t \)
+    \item \( \beta\,B_t \): bono de exploración
+    \item \( \pi \): política del agente, que debe operar bajo incertidumbre del estado y posiblemente de las transiciones
+\end{itemize}
+
+\vspace{1em}
+
+\subsection*{5. Incorporación de la Probabilidad Revelada}
+
+La consulta en cada turno actúa como una observación parcial del estado actual, específica al brazo elegido.  
+Dependiendo de si las transiciones son conocidas o no:
+
+\begin{itemize}
+    \item Si son conocidas, la consulta ayuda a actualizar la creencia sobre \( S_t \) con mayor precisión (razonamiento bayesiano clásico).
+    \item Si son desconocidas, la consulta puede servir para ajustar los parámetros estimados del modelo (por ejemplo, usando EM o Baum-Welch).
+\end{itemize}
+
+Esta observación mejora la calidad de la creencia del agente, lo que le permite tomar mejores decisiones tanto para explotar como para explorar.
 
 
 ```
@@ -495,6 +788,7 @@ Finalmente, para cada problema, **añade una breve “pregunta de intuición”*
 **Pregunta de Intuición**
 ```
 
+¿Cómo prevés usar la consulta de probabilidad de éxito de un brazo en un entorno POMDP o con horizonte aleatorio? ¿Te permitiría explotar con más confianza un brazo prometedor o sería principalmente valiosa para refinar tu creencia a lo largo del tiempo?
 
 ```
 ---
